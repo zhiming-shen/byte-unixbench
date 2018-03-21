@@ -195,11 +195,11 @@ char    *argv[];
     }
     */
 
-    if( (f = open("/tmp", O_TMPFILE | O_RDWR)) == -1) {
+    if( (f = open("/tmp", O_TMPFILE | O_RDWR, S_IRWXU)) == -1) {
             perror("fstime: open");
             exit(1);
     }
-    if( ( g = open("/tmp", O_TMPFILE | O_RDWR)) == -1 ) {
+    if( ( g = open("/tmp", O_TMPFILE | O_RDWR, S_IRWXU)) == -1 ) {
             perror("fstime: open");
             exit(1);
     }

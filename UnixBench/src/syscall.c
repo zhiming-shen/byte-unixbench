@@ -67,7 +67,7 @@ char	*argv[];
 
 	iter = 0;
 	wake_me(duration, report);
-	file_fd = open("/tmp", O_TMPFILE | O_RDWR);
+	file_fd = open("/tmp", O_TMPFILE | O_RDWR, S_IRWXU);
 	if(file_fd <= 0) report();
 
         switch (test[0]) {
