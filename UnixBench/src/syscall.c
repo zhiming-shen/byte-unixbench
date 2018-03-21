@@ -29,8 +29,14 @@ char SCCSid[] = "@(#) @(#)syscall.c:3.3 -- 5/15/91 19:30:21";
 #include <sys/types.h>
 #include <sys/wait.h>
 #include "timeit.c"
+#include <time.h>
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 unsigned long iter;
+
+#define O_TMPFILE __O_TMPFILE
 
 void report()
 {
@@ -44,6 +50,7 @@ char	*argv[];
 {
         char   *test;
 	int	duration;
+	int file_fd;
 
 	if (argc < 2) {
 		fprintf(stderr,"Usage: %s duration [ test ]\n", argv[0]);
@@ -60,11 +67,13 @@ char	*argv[];
 
 	iter = 0;
 	wake_me(duration, report);
+	file_fd = open("/tmp", O_TMPFILE | O_RDWR);
+	if(file_fd <= 0) report();
 
         switch (test[0]) {
         case 'm':
 	   while (1) {
-		close(dup(0));
+		close(dup(file_fd));
 		getpid();
 		getuid();
 		umask(022);

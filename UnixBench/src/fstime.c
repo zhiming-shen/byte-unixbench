@@ -40,6 +40,8 @@ char SCCSid[] = "@(#) @(#)fstime.c:3.5 -- 5/15/91 19:30:19";
 #include <unistd.h>
 #include <sys/time.h>
 
+#define O_TMPFILE __O_TMPFILE
+
 #define SECONDS 10
 
 #define MAX_BUFSIZE 8192
@@ -170,6 +172,7 @@ char    *argv[];
     }
     */
 
+    /*
     if((f = creat(FNAME0, 0600)) == -1) {
             perror("fstime: creat");
             exit(1);
@@ -187,6 +190,16 @@ char    *argv[];
             exit(1);
     }
     if( ( g = open(FNAME1, 2)) == -1 ) {
+            perror("fstime: open");
+            exit(1);
+    }
+    */
+
+    if( (f = open("/tmp", O_TMPFILE | O_RDWR)) == -1) {
+            perror("fstime: open");
+            exit(1);
+    }
+    if( ( g = open("/tmp", O_TMPFILE | O_RDWR)) == -1 ) {
             perror("fstime: open");
             exit(1);
     }
@@ -461,6 +474,7 @@ void stop_count(void)
 
 void clean_up(void)
 {
-        unlink(FNAME0);
+        /*unlink(FNAME0);
         unlink(FNAME1);
+        */
 }
