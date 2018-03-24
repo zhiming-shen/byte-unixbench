@@ -37,10 +37,14 @@ char SCCSid[] = "@(#) @(#)syscall.c:3.3 -- 5/15/91 19:30:21";
 unsigned long iter;
 
 #define O_TMPFILE __O_TMPFILE
+#define FNAME_SIZE 20
+
+char fname[FNAME_SIZE];
 
 void report()
 {
 	fprintf(stderr,"COUNT|%ld|1|lps\n", iter);
+	unlink(fname);
 	exit(0);
 }
 
@@ -51,7 +55,11 @@ char	*argv[];
         char   *test;
 	int	duration;
 	int file_fd;
-
+	
+	int pid;
+	pid = getpid();
+	sprintf(fname, "/tmp/%d", pid);
+		
 	if (argc < 2) {
 		fprintf(stderr,"Usage: %s duration [ test ]\n", argv[0]);
                 fprintf(stderr,"test is one of:\n");
@@ -67,17 +75,23 @@ char	*argv[];
 
 	iter = 0;
 	wake_me(duration, report);
-	file_fd = open("/tmp", O_TMPFILE | O_RDWR, S_IRWXU);
-	if(file_fd <= 0) report();
+
+	if((file_fd = creat(fname, 0600)) == -1) {
+            perror("syscall: creat");
+            exit(1);
+	}
+	
+	if(file_fd <= 0)
+	  report();
 
         switch (test[0]) {
         case 'm':
-	   while (1) {
+	   while (1) {	     
 		close(dup(file_fd));
 		getpid();
 		getuid();
 		umask(022);
-		iter++;
+		iter++;		
 	   }
 	   /* NOTREACHED */
         case 'c':

@@ -52,6 +52,7 @@ char SCCSid[] = "@(#) @(#)fstime.c:3.5 -- 5/15/91 19:30:19";
 
 #define FNAME0  "dummy0"
 #define FNAME1  "dummy1"
+#define FNAME_SIZE 20
 
 int w_test(int timeSecs);
 int r_test(int timeSecs);
@@ -89,6 +90,8 @@ int count_per_buf;
  * What up wit dat?
  */
 char buf[MAX_BUFSIZE];
+char fname0[FNAME_SIZE];
+char fname1[FNAME_SIZE];
 
 int                     f;
 int                     g;
@@ -112,6 +115,11 @@ char    *argv[];
     int status;
     int i;
 
+    int pid;    
+    pid = getpid();
+    sprintf(fname0, "/tmp/%d-0", pid);
+    sprintf(fname1, "/tmp/%d-1", pid);
+        
     for (i = 1; i < argc; ++i) {
         if (argv[i][0] == '-') {
             switch (argv[i][1]) {
@@ -172,38 +180,30 @@ char    *argv[];
     }
     */
 
-    /*
-    if((f = creat(FNAME0, 0600)) == -1) {
+    
+    if((f = creat(fname0, 0600)) == -1) {
             perror("fstime: creat");
             exit(1);
     }
     close(f);
 
-    if((g = creat(FNAME1, 0600)) == -1) {
+    if((g = creat(fname1, 0600)) == -1) {
             perror("fstime: creat");
             exit(1);
     }
     close(g);
 
-    if( (f = open(FNAME0, 2)) == -1) {
+    if( (f = open(fname0, 2)) == -1) {
             perror("fstime: open");
             exit(1);
     }
-    if( ( g = open(FNAME1, 2)) == -1 ) {
+    if( ( g = open(fname1, 2)) == -1 ) {
             perror("fstime: open");
             exit(1);
     }
-    */
+    
 
-    if( (f = open("/tmp", O_TMPFILE | O_RDWR, S_IRWXU)) == -1) {
-            perror("fstime: open");
-            exit(1);
-    }
-    if( ( g = open("/tmp", O_TMPFILE | O_RDWR, S_IRWXU)) == -1 ) {
-            perror("fstime: open");
-            exit(1);
-    }
-
+    
     /* fill buffer */
     for (i=0; i < bufsize; ++i)
             buf[i] = i & 0xff;
@@ -474,7 +474,7 @@ void stop_count(void)
 
 void clean_up(void)
 {
-        /*unlink(FNAME0);
-        unlink(FNAME1);
-        */
+        unlink(fname0);
+        unlink(fname1);
+        
 }
