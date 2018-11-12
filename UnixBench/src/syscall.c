@@ -58,7 +58,7 @@ char	*argv[];
 	
 	int pid;
 	pid = getpid();
-	sprintf(fname, "/tmp/%d", pid);
+	sprintf(fname, "/dev/shm/%d", pid);
 		
 	if (argc < 2) {
 		fprintf(stderr,"Usage: %s duration [ test ]\n", argv[0]);
